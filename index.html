@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Керування дверима</title>
+</head>
+<body>
+    <h1>Дистанційне керування дверима</h1>
+    <input type="password" id="password" placeholder="Введіть пароль">
+    <br><br>
+    <button onclick="sendCommand('open')">🔓 Відкрити</button>
+    <button onclick="sendCommand('close')">🔒 Закрити</button>
+
+    <script>
+        const espIP = "http://ТВОЯ_IP_АДРЕСА";  // Заміни на IP ESP32 (наприклад, http://192.168.1.50)
+        
+        function sendCommand(command) {
+            const password = document.getElementById("password").value;
+            if (!password) {
+                alert("❌ Введіть пароль!");
+                return;
+            }
+
+            fetch(`${espIP}/${command}?password=${password}`)
+                .then(response => response.text())
+                .then(data => alert(data))
+                .catch(error => alert("Помилка: " + error));
+        }
+    </script>
+</body>
+</html>
