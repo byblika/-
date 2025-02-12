@@ -3,29 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Керування дверима</title>
+    <title>Керування Дверима</title>
 </head>
 <body>
-    <h1>Дистанційне керування дверима</h1>
+    <h1>Керування Дверима</h1>
+    <label for="password">Введіть пароль:</label>
     <input type="password" id="password" placeholder="Введіть пароль">
-    <br><br>
-    <button onclick="sendCommand('open')">🔓 Відкрити</button>
-    <button onclick="sendCommand('close')">🔒 Закрити</button>
-
+    <button onclick="checkPassword()">🔑 Увійти</button>
+    
+    <div id="controls" style="display: none;">
+        <button onclick="controlDoor('open')">🔓 Відкрити двері</button>
+        <button onclick="controlDoor('close')">🔒 Закрити двері</button>
+    </div>
+    
     <script>
-        const espIP = "http://ТВОЯ_IP_АДРЕСА";  // Заміни на IP ESP32 (наприклад, http://192.168.1.50)
+        const serverURL = "https://byblika.github.io/-/"; // URL твого сервера
+        const apiToken = "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"; // Замініть на ваш API токен
+        const correctPassword = "1234";
         
-        function sendCommand(command) {
+        function checkPassword() {
             const password = document.getElementById("password").value;
-            if (!password) {
-                alert("❌ Введіть пароль!");
-                return;
+            if (password === correctPassword) {
+                document.getElementById("controls").style.display = "block";
+            } else {
+                alert("❌ Невірний пароль!");
             }
-
-            fetch(`${espIP}/${command}?password=${password}`)
-                .then(response => response.text())
-                .then(data => alert(data))
-                .catch(error => alert("Помилка: " + error));
+        }
+        
+        function controlDoor(command) {
+            fetch(`${serverURL}/control?token=${apiToken}&command=${command}`, {
+                method: "GET"
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => alert("Помилка: " + error));
         }
     </script>
 </body>
