@@ -1,44 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Управління дверима через GitHub</title>
-  <script>
-    function sendCommandToESP32() {
-      const command = document.getElementById("command").value;  // Отримуємо команду з поля вводу
-      const token = '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';  // Ваш токен
-      const esp32URL = "http://192.168.31.203/control";  // Замість цього використовуйте IP ESP32
-
-      // Перевірка, чи введена команда
-      if (command == "") {
-        alert("Будь ласка, введіть команду!");
-        return;
-      }
-
-      // Формуємо URL для запиту
-      const url = `${esp32URL}?token=${token}&command=${command}`;
-
-      // Відправляємо GET запит на сервер ESP32
-      fetch(url)
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById("status").innerText = data;
-        })
-        .catch(error => {
-          console.error("Помилка:", error);
-          document.getElementById("status").innerText = "Помилка при зв'язку з сервером.";
-        });
+  <title>Управління дверима через ESP32</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f4f4f4;
     }
-  </script>
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      margin: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:active {
+      background-color: #45a049;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Управління дверима через GitHub</h1>
+  <h1>Управління дверима через ESP32</h1>
 
-  <label for="command">Команда (open/close): </label>
-  <input type="text" id="command" name="command" placeholder="Введіть команду">
-  <button onclick="sendCommandToESP32()">Відправити команду</button>
+  <button onclick="sendCommand('open')">Відкрити двері</button>
+  <button onclick="sendCommand('close')">Закрити двері</button>
 
   <p id="status">Статус: Невідомо</p>
+
+  <script>
+    // Вказати IP адреса вашого ESP32
+    const esp32IP = '192.168.31.203'; // Замість цього вкажіть IP вашого ESP32
+
+    // Функція для відправки команд
+    function sendCommand(action) {
+      fetch(`${esp32IP}/control-door`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: action })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("status").innerText = `Статус: ${data.message}`;
+      })
+      .catch(error => {
+        console.error('Помилка:', error);
+        document.getElementById("status").innerText = 'Статус: Помилка з’єднання';
+      });
+    }
+  </script>
 </body>
 </html>
