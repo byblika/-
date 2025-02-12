@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Управління дверима через ESP32</title>
+  <title>Керування ESP32 через GitHub</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-end; /* Опускає контент вниз */
+      justify-content: flex-end;
       height: 100vh;
       margin: 0;
       background-image: url("photo_2025-02-12_15-44-30.jpg");
@@ -18,54 +18,51 @@
       background-position: center;
     }
     button {
-      padding: 25px 10px;
-      font-size: 50px;
-      margin: 50px;
+      padding: 40px 80px;
+      font-size: 30px;
+      margin: 20px;
       background-color: #4CAF50;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 10px;
       cursor: pointer;
     }
     button:active {
       background-color: #45a049;
     }
-    #status {
-      font-size: 20px;
-      margin-bottom: 20px; /* Відступ від краю */
-    }
   </style>
 </head>
 <body>
-
-
-  <div style="margin-top: auto; text-align: center;">
-    <button onclick="sendCommand('open')">Відкрити двері</button>
-    <p id="status">Статус: Невідомо</p>
-  </div>
+  <h1>Керування ESP32</h1>
+  
+  <button onclick="sendCommand()">Відкрити двері</button>
 
   <script>
-    // Вказати IP адреса вашого ESP32
-    const esp32IP = '192.168.31.203'; // Замість цього вкажіть IP вашого ESP32
+    const GIST_ID = "xxxxxxxxxxxxxxxxxxxxxxx"; // Встав свій Gist ID
+    const TOKEN = "ghp_xxxxxxxxxxxxxxxxxxxx"; // Встав свій Fine-grained token
+    const GIST_URL = `https://api.github.com/gists/${GIST_ID}`;
 
-    // Функція для відправки команд
-    function sendCommand(action) {
-      fetch(`${esp32IP}/control-door`, {
-        method: 'POST',
+    function sendCommand() {
+      fetch(GIST_URL, {
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json'
+          "Authorization": `Bearer ${TOKEN}`,
+          "Accept": "application/vnd.github.v3+json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify({ action: action })
+        body: JSON.stringify({
+          files: {
+            "command.json": {
+              content: JSON.stringify({ command: "open" })
+            }
+          }
+        })
       })
       .then(response => response.json())
-      .then(data => {
-        document.getElementById("status").innerText = `Статус: ${data.message}`;
-      })
-      .catch(error => {
-        console.error('Помилка:', error);
-        document.getElementById("status").innerText = 'Статус: Помилка з’єднання';
-      });
+      .then(data => console.log("Команда збережена:", data))
+      .catch(error => console.error("Помилка:", error));
     }
-  </script>   
+  </script>
 </body>
 </html>
+
