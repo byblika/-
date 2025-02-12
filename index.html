@@ -1,43 +1,44 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Керування Дверима</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Управління дверима через GitHub</title>
+  <script>
+    function sendCommandToESP32() {
+      const command = document.getElementById("command").value;  // Отримуємо команду з поля вводу
+      const token = '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';  // Ваш токен
+      const esp32URL = "http://192.168.31.203/control";  // Замість цього використовуйте IP ESP32
+
+      // Перевірка, чи введена команда
+      if (command == "") {
+        alert("Будь ласка, введіть команду!");
+        return;
+      }
+
+      // Формуємо URL для запиту
+      const url = `${esp32URL}?token=${token}&command=${command}`;
+
+      // Відправляємо GET запит на сервер ESP32
+      fetch(url)
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("status").innerText = data;
+        })
+        .catch(error => {
+          console.error("Помилка:", error);
+          document.getElementById("status").innerText = "Помилка при зв'язку з сервером.";
+        });
+    }
+  </script>
 </head>
 <body>
-    <h1>Керування Дверима</h1>
-    <label for="password">Введіть пароль:</label>
-    <input type="password" id="password" placeholder="Введіть пароль">
-    <button onclick="checkPassword()">🔑 Увійти</button>
-    
-    <div id="controls" style="display: none;">
-        <button onclick="controlDoor('open')">🔓 Відкрити двері</button>
-        <button onclick="controlDoor('close')">🔒 Закрити двері</button>
-    </div>
-    
-    <script>
-        const serverURL = "https://byblika.github.io/-/"; // URL твого сервера
-        const apiToken = "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"; // Замініть на ваш API токен
-        const correctPassword = "1234";
-        
-        function checkPassword() {
-            const password = document.getElementById("password").value;
-            if (password === correctPassword) {
-                document.getElementById("controls").style.display = "block";
-            } else {
-                alert("❌ Невірний пароль!");
-            }
-        }
-        
-        function controlDoor(command) {
-            fetch(`${serverURL}/control?token=${apiToken}&command=${command}`, {
-                method: "GET"
-            })
-            .then(response => response.text())
-            .then(data => alert(data))
-            .catch(error => alert("Помилка: " + error));
-        }
-    </script>
+  <h1>Управління дверима через GitHub</h1>
+
+  <label for="command">Команда (open/close): </label>
+  <input type="text" id="command" name="command" placeholder="Введіть команду">
+  <button onclick="sendCommandToESP32()">Відправити команду</button>
+
+  <p id="status">Статус: Невідомо</p>
 </body>
 </html>
