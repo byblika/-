@@ -10,15 +10,17 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end; /* Опускає контент вниз */
       height: 100vh;
-      background-color: #f4f4f4;
-      background: photo_2025-02-12_15-44-30.jpg;
+      margin: 0;
+      background-image: url("photo_2025-02-12_15-44-30.jpg");
+      background-size: cover;
+      background-position: center;
     }
     button {
-      padding: 150px 300px;
-      font-size: 180px;
-      margin: 10px;
+      padding: 100px 150px;
+      font-size: 50px;
+      margin: 50px;
       background-color: #4CAF50;
       color: white;
       border: none;
@@ -29,17 +31,18 @@
       background-color: #45a049;
     }
     #status {
-      margin-top: 20px;
       font-size: 20px;
+      margin-bottom: 20px; /* Відступ від краю */
     }
   </style>
 </head>
 <body>
   <h1>Управління дверима через ESP32</h1>
 
-  <button onclick="sendCommand('open')">Відкрити двері</button>
-
-  <p id="status">Статус: Невідомо</p>
+  <div style="margin-top: auto; text-align: center;">
+    <button onclick="sendCommand('open')">Відкрити двері</button>
+    <p id="status">Статус: Невідомо</p>
+  </div>
 
   <script>
     // Вказати IP адреса вашого ESP32
@@ -63,6 +66,6 @@
         document.getElementById("status").innerText = 'Статус: Помилка з’єднання';
       });
     }
-  </script>
+  </script>   
 </body>
 </html>
